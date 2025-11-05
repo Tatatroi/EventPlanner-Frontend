@@ -2,62 +2,128 @@ import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [formData, setFormData] = useState({
+  const [isRegistering, setIsRegistering] = useState(true);
+
+  //registration form
+  const [registerData, setRegisterData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
 
-  const handleChange = (e) => {
+  //login form
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleRegisterChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setRegisterData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData((prev) => ({ ...prev, [name]: value }));
+  };
+//pana dezvoltam mai tarziu am adaugat mesaje
+  const handleRegisterSubmit = (e) => {
     e.preventDefault();
-    alert("Form submitted!");
+    alert("Registration successful!");
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    alert("Signed in successfully!");
   };
 
   return (
     <div className="wrapper">
       <div className="form-box">
-        <h1>Registration</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-          />
+        {isRegistering ? (
+          <>
+            <h1>Register</h1>
+            <form onSubmit={handleRegisterSubmit}>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First Name"
+                value={registerData.firstName}
+                onChange={handleRegisterChange}
+              />
 
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-          />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last Name"
+                value={registerData.lastName}
+                onChange={handleRegisterChange}
+              />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={registerData.email}
+                onChange={handleRegisterChange}
+              />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-          />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={registerData.password}
+                onChange={handleRegisterChange}
+              />
 
-          <button type="submit">Register</button>
-        </form>
+              <button type="submit">Register</button>
+            </form>
+
+            <p className="toggle-text">
+              Already have an account?{" "}
+              <button
+                className="toggle-button"
+                onClick={() => setIsRegistering(false)}
+              >
+                Sign In
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <h1>Sign In</h1>
+            <form onSubmit={handleLoginSubmit}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={loginData.email}
+                onChange={handleLoginChange}
+              />
+
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={loginData.password}
+                onChange={handleLoginChange}
+              />
+
+              <button type="submit">Sign In</button>
+            </form>
+
+            <p className="toggle-text">
+              Don’t have an account?{" "}
+              <button
+                className="toggle-button"
+                onClick={() => setIsRegistering(true)}
+              >
+                Register
+              </button>
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
