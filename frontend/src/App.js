@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import "./App.css";
+import HomePage from "./HomePage";
+
 
 function App() {
   const [isRegistering, setIsRegistering] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   //registration form
   const [registerData, setRegisterData] = useState({
@@ -27,16 +31,20 @@ function App() {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
-//pana dezvoltam mai tarziu am adaugat mesaje
+
   const handleRegisterSubmit = (e) => {
-    e.preventDefault();
-    alert("Registration successful!");
-  };
+  e.preventDefault();
+  setIsLoggedIn(true);
+};
 
   const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    alert("Signed in successfully!");
-  };
+  e.preventDefault();
+  setIsLoggedIn(true);
+};
+
+if (isLoggedIn) {
+  return <HomePage />;
+}
 
   return (
     <div className="wrapper">
