@@ -1,7 +1,7 @@
 import React from "react";
 import "./HomePage.css";
 
-function HomePage() {
+function HomePage({ onLogout }) {
   return (
     <div className="home-container">
 
@@ -13,6 +13,10 @@ function HomePage() {
           <li>CREATE MY EVENT</li>
           <li>MANAGE MY EVENTS</li>
         </ul>
+
+        <button className="logout-button" onClick={onLogout}>
+          LOG OUT
+        </button>
       </div>
 
       <div className="main-content">

@@ -43,8 +43,9 @@ function App() {
 };
 
 if (isLoggedIn) {
-  return <HomePage />;
+  return <HomePage onLogout={() => setIsLoggedIn(false)} />;
 }
+
 
   return (
     <div className="wrapper">

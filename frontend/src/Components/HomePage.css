@@ -11,7 +11,9 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  /*gap: 30px;*/
+  justify-content: space-between;
+  height: 90vh;
 }
 
 .profile-pic {
@@ -68,4 +70,18 @@
   font-size: 16px;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  text-decoration: underline;
+  color: black;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.logout-button:hover {
+  color: #555;
 }
