@@ -3,14 +3,14 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #2ef43f5f;
+  background-color: #19183B;
 }
 
 .form-box {
   width: 350px;
   padding: 30px;
-  background-color: #ffffff;
-  border: 3px solid #333;
+  background-color: #708993;
+  border: 3px solid #A1C2BD;
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -20,7 +20,7 @@
 h1 {
   margin-bottom: 25px;
   font-size: 24px;
-  color: #333;
+  color: #E7F2EF;
 }
 
 form {
@@ -38,7 +38,7 @@ input {
 
 button {
   padding: 10px;
-  background-color: #0b6012b7;
+  background-color: #A1C2BD;
   border: none;
   border-radius: 6px;
   color: white;
@@ -48,7 +48,7 @@ button {
 }
 
 button:hover {
-  background-color: #06460bb7;
+  background-color: #19183B;
 }
 
 .toggle-text {
@@ -60,7 +60,7 @@ button:hover {
 .toggle-button {
   background: none;
   border: none;
-  color: #0b6012b7;
+  color: #19183B;
   cursor: pointer;
   font-size: 14px;
   text-decoration: underline;
