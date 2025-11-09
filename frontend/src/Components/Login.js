@@ -1,22 +1,19 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import HomePage from "./HomePage";
 
-
-function App() {
+function Login() {
+  const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-
-  //registration form
+  //registration form state
   const [registerData, setRegisterData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
-
-  //login form
+  //login form state
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -33,18 +30,14 @@ function App() {
   };
 
   const handleRegisterSubmit = (e) => {
-  e.preventDefault();
-  setIsLoggedIn(true);
-};
+    e.preventDefault();
+    navigate("/home");
+  };
 
   const handleLoginSubmit = (e) => {
-  e.preventDefault();
-  setIsLoggedIn(true);
-};
-
-if (isLoggedIn) {
-  return <HomePage />;
-}
+    e.preventDefault();
+    navigate("/home");
+  };
 
   return (
     <div className="wrapper">
@@ -59,35 +52,34 @@ if (isLoggedIn) {
                 placeholder="First Name"
                 value={registerData.firstName}
                 onChange={handleRegisterChange}
+                required
               />
-
               <input
                 type="text"
                 name="lastName"
                 placeholder="Last Name"
                 value={registerData.lastName}
                 onChange={handleRegisterChange}
+                required
               />
-
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 value={registerData.email}
                 onChange={handleRegisterChange}
+                required
               />
-
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={registerData.password}
                 onChange={handleRegisterChange}
+                required
               />
-
               <button type="submit">Register</button>
             </form>
-
             <p className="toggle-text">
               Already have an account?{" "}
               <button
@@ -108,19 +100,18 @@ if (isLoggedIn) {
                 placeholder="Email"
                 value={loginData.email}
                 onChange={handleLoginChange}
+                required
               />
-
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={loginData.password}
                 onChange={handleLoginChange}
+                required
               />
-
               <button type="submit">Sign In</button>
             </form>
-
             <p className="toggle-text">
               Don’t have an account?{" "}
               <button
@@ -137,4 +128,4 @@ if (isLoggedIn) {
   );
 }
 
-export default App;
+export default Login;
