@@ -12,9 +12,17 @@ function HomePage() {
 
   return (
     <div className="home-container">
-      
       <div className="sidebar">
-        <div className="profile-section">
+        <div
+          className="profile-section"
+          onClick={() => navigate("/profile")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") navigate("/profile");
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <img src={profileImg} alt="Profile" className="profile-pic" />
           <h3 className="sidebar-title">My Profile</h3>
         </div>
@@ -22,6 +30,9 @@ function HomePage() {
         <ul className="menu">
           <li className="menu-item">Create My Event</li>
           <li className="menu-item">Manage My Events</li>
+          <li className="menu-item" onClick={() => navigate("/profile")}>
+            Edit Profile
+          </li>
         </ul>
 
         <button className="logout-button" onClick={onLogout}>
@@ -49,7 +60,6 @@ function HomePage() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
