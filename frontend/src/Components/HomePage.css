@@ -16,9 +16,6 @@
   border-right: 2px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-<<<<<<< Updated upstream
-  gap: 30px;
-=======
   justify-content: space-between;
   padding: 35px 20px;
   height: 91vh;
@@ -26,7 +23,6 @@
 
 .profile-section {
   text-align: center;
->>>>>>> Stashed changes
 }
 
 .profile-pic {
@@ -108,8 +104,6 @@
   text-decoration: underline;
   cursor: pointer;
 }
-<<<<<<< Updated upstream
-=======
 
 .logout-button {
   background: none;
@@ -124,4 +118,3 @@
 .logout-button:hover {
   color: #E7F2EF;
 }
->>>>>>> Stashed changes
