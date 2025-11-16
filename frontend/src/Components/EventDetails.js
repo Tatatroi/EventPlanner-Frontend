@@ -14,8 +14,8 @@ function EventDetails() {
         <h1 className="event-details-title">Event {id} Details</h1>
 
         <p className="event-details-text">
-          This is where you will display full information about Event {id}:  
-          description, date, location, participants, tasks, etc.
+          Aici vor aparea informatiile despre Event {id}:  
+          description, date, location, participants, etc.
         </p>
 
         <button className="back-button" onClick={goBack}>

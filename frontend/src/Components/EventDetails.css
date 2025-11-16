@@ -3,13 +3,13 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #fafafa;
+  background-color: #19183B;
 }
 
 .event-details-card {
   padding: 40px;
   border-radius: 12px;
-  background-color: white;
+  background-color: #A1C2BD;
   box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
   width: 500px;
   text-align: center;
@@ -29,7 +29,7 @@
 .back-button {
   padding: 10px 20px;
   border-radius: 8px;
-  background-color: #2f80ed;
+  background-color: #708993;
   color: white;
   border: none;
   font-size: 16px;
