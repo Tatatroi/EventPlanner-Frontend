@@ -10,6 +10,11 @@ function HomePage() {
     navigate("/");
   };
 
+  const goToEvent = (id) => {
+  navigate(`/event/${id}`);
+};
+
+
   return (
     <div className="home-container">
       
@@ -35,17 +40,21 @@ function HomePage() {
         <div className="event-grid">
           <div className="event-box">
             <p className="event-title">EVENT 1</p>
-            <button className="event-button">SEE EVENT DETAILS</button>
+            <button className="event-button" onClick={() => goToEvent(1)}>
+              SEE EVENT DETAILS
+            </button>
           </div>
 
           <div className="event-box">
-            <p className="event-title">EVENT 2</p>
-            <button className="event-button">SEE EVENT DETAILS</button>
+            <p className="event-title">EVENT 2</p><button className="event-button" onClick={() => goToEvent(2)}>
+              SEE EVENT DETAILS
+            </button>
           </div>
 
           <div className="event-box">
-            <p className="event-title">EVENT 3</p>
-            <button className="event-button">SEE EVENT DETAILS</button>
+            <p className="event-title">EVENT 3</p><button className="event-button" onClick={() => goToEvent(3)}>
+              SEE EVENT DETAILS
+            </button>
           </div>
         </div>
       </div>
