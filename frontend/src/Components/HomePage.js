@@ -20,7 +20,13 @@ function HomePage() {
         </div>
 
         <ul className="menu">
-          <li className="menu-item">Create My Event</li>
+          <li
+            className="menu-item"
+            onClick={() => navigate("/create-event")}
+          >
+          Create My Event
+          </li>
+
           <li className="menu-item">Manage My Events</li>
         </ul>
 
