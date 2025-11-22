@@ -1,0 +1,73 @@
+.create-event-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #A1C2BD; /* same as event-box */
+  border-radius: 10px;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.create-event-title {
+  text-align: center;
+  color: #E7F2EF; /* match home-title */
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.button-group {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.event-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: #19183B; /* text color for buttons */
+}
+
+.event-button:hover {
+  color: #333; /* subtle hover effect */
+}
+
+.event-button.cancel {
+  text-decoration: underline;
+  color: #19183B;
+}
+
+.event-button.cancel:hover {
+  color: #333;
+}
