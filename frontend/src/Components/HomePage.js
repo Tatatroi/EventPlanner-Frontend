@@ -1,35 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./HomePage.css";
 import profileImg from "../Assets/profilepicture.png";
 import { useNavigate } from "react-router-dom";
+import EventList from "../api/eventList";
 
 function HomePage() {
   const navigate = useNavigate();
 
+  const [allEvents, setAllEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [errorEvents, setErrorEvents] = useState("");
+
   const onLogout = () => {
+    localStorage.removeItem("userId");
     navigate("/");
   };
 
   const goToEvent = (id) => {
     navigate(`/event/${id}`);
+    //    navigate(`/event/${localStorage.getItem("userId")}`);
+
   };
 
-  //de inlocuit cu backend data mai tarziu
-  const myEvents = [
-    { id: 1, title: "My Event 1" },
-    { id: 2, title: "My Event 2" },
-    { id: 3, title: "My Event 3" },
-    { id: 4, title: "My Event 4" },
-    { id: 5, title: "My Event 5" },
-    { id: 6, title: "My Event 6" }
-  ];
-
-  const attendingEvents = [
-    { id: 101, title: "Attending Event 1" },
-    { id: 102, title: "Attending Event 2" },
-    { id: 103, title: "Attending Event 3" },
-    { id: 104, title: "Attending Event 4" }
-  ];
+  // Fetch all events for the logged user
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const userId = localStorage.getItem("userId");
+      console.log("Loading events for userId:", userId);
+      setLoadingEvents(true);
+      setErrorEvents("");
+      try {
+        const events = await EventList(userId);
+        console.log("Events received from API:", events);
+        if (!cancelled) {
+          setAllEvents(Array.isArray(events) ? events : []);
+          console.log("Events set to state:", Array.isArray(events) ? events : []);
+        }
+      } catch (e) {
+        console.error("Error loading events:", e);
+        if (!cancelled) setErrorEvents(e.message || "Eroare la încărcarea evenimentelor");
+      } finally {
+        if (!cancelled) setLoadingEvents(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   //index pentru butonul de navigare intre evenimente
   const [myIndex, setMyIndex] = useState(0);
@@ -39,7 +56,8 @@ function HomePage() {
 
   //navigare pt MY EVENTS
   const nextMyEvents = () => {
-    if (myIndex + ITEMS_PER_PAGE < myEvents.length) {
+    const organizerEvents = allEvents.filter(e => e.role === 'Organizer');
+    if (myIndex + ITEMS_PER_PAGE < organizerEvents.length) {
       setMyIndex(myIndex + ITEMS_PER_PAGE);
     }
   };
@@ -52,7 +70,8 @@ function HomePage() {
 
   //navigare pt ATTENDING EVENTS
   const nextAttending = () => {
-    if (attIndex + ITEMS_PER_PAGE < attendingEvents.length) {
+    const attendeeEvents = allEvents.filter(e => e.role === 'attendee');
+    if (attIndex + ITEMS_PER_PAGE < attendeeEvents.length) {
       setAttIndex(attIndex + ITEMS_PER_PAGE);
     }
   };
@@ -95,7 +114,7 @@ function HomePage() {
               </button>
             )}
 
-            {myIndex + ITEMS_PER_PAGE < myEvents.length && (
+            {myIndex + ITEMS_PER_PAGE < allEvents.filter(e => e.role === 'Organizer').length && (
               <button className="arrow-button" onClick={nextMyEvents}>
                 ▶
               </button>
@@ -104,14 +123,26 @@ function HomePage() {
         </div>
 
         <div className="event-grid">
-          {myEvents.slice(myIndex, myIndex + ITEMS_PER_PAGE).map((event) => (
-            <div className="event-box" key={event.id}>
-              <p className="event-title">{event.title}</p>
-              <button className="event-button" onClick={() => goToEvent(event.id)}>
-                SEE EVENT DETAILS
-              </button>
-            </div>
-          ))}
+          {loadingEvents && allEvents.length === 0 && (
+            <p>Loading your events...</p>
+          )}
+          {errorEvents && (
+            <p style={{ color: "red" }} role="alert">{errorEvents}</p>
+          )}
+          {!loadingEvents && allEvents.filter(e => e.role === 'Organizer').length === 0 && !errorEvents && (
+            <p className="empty-message">Nu ai încă evenimente create.</p>
+          )}
+          {allEvents
+            .filter(eventUser => eventUser && eventUser.role === 'Organizer')
+            .slice(myIndex, myIndex + ITEMS_PER_PAGE)
+            .map((eventUser) => (
+              <div className="event-box" key={eventUser.eventId}>
+                <p className="event-title">Event ID: {eventUser.eventId} ({eventUser.role})</p>
+                <button className="event-button" onClick={() => goToEvent(eventUser.eventId)}>
+                  SEE EVENT DETAILS
+                </button>
+              </div>
+            ))}
         </div>
 
         {/* -------------------- EVENTS I'M ATTENDING -------------------- */}
@@ -125,7 +156,7 @@ function HomePage() {
               </button>
             )}
 
-            {attIndex + ITEMS_PER_PAGE < attendingEvents.length && (
+            {attIndex + ITEMS_PER_PAGE < allEvents.filter(e => e.role === 'attendee').length && (
               <button className="arrow-button" onClick={nextAttending}>
                 ▶
               </button>
@@ -134,12 +165,22 @@ function HomePage() {
         </div>
 
         <div className="event-grid">
-          {attendingEvents
+          {loadingEvents && allEvents.length === 0 && (
+            <p>Loading events...</p>
+          )}
+          {errorEvents && (
+            <p style={{ color: "red" }} role="alert">{errorEvents}</p>
+          )}
+          {!loadingEvents && allEvents.filter(e => e.role === 'attendee').length === 0 && !errorEvents && (
+            <p className="empty-message">Nu participi la niciun eveniment.</p>
+          )}
+          {allEvents
+            .filter(eventUser => eventUser && eventUser.role === 'attendee')
             .slice(attIndex, attIndex + ITEMS_PER_PAGE)
-            .map((event) => (
-              <div className="event-box" key={event.id}>
-                <p className="event-title">{event.title}</p>
-                <button className="event-button" onClick={() => goToEvent(event.id)}>
+            .map((eventUser) => (
+              <div className="event-box" key={eventUser.eventId}>
+                <p className="event-title">Event ID: {eventUser.eventId} ({eventUser.role})</p>
+                <button className="event-button" onClick={() => goToEvent(eventUser.eventId)}>
                   SEE EVENT DETAILS
                 </button>
               </div>

@@ -4,9 +4,11 @@ import "./EventDetails.css";
 
 function EventDetails() {
   const navigate = useNavigate();
-  const { id } = useParams();                                   //event ID from URL
+  const { id } = useParams();                                  
 
   const goBack = () => navigate("/home");
+
+  const goInvite = () => navigate(`/invite-people/${id}`)
 
   return (
     <div className="event-details-container">
@@ -20,6 +22,10 @@ function EventDetails() {
 
         <button className="back-button" onClick={goBack}>
           Back to My Events
+        </button>
+
+        <button className="invite-people-button" onClick={goInvite}>
+          Invite People
         </button>
       </div>
     </div>
