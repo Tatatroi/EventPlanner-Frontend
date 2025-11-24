@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
-import { loginUser, saveAuthToken } from "../api/logInApi";
+import { loginUser } from "../api/logInApi";
+import saveAuthData from "../auth/UserDataFunction";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -15,23 +16,29 @@ export default function LoginPage() {
   };
 
   const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSubmitting(true);
-    try {
-      const data = await loginUser(loginData);
-      const token = data?.token || data?.accessToken || data?.jwt;
-      if (token) {
-        saveAuthToken(token);
-      }
-      // Navigate on success (adjust route if needed)
-      navigate("/home");
-    } catch (err) {
-      setError(err?.message || "Eroare la autentificare");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  e.preventDefault();
+  setError("");
+  setSubmitting(true);
+
+  try {
+    const data = await loginUser(loginData);
+
+    // data = { token, userId, email }
+    saveAuthData({
+      token: data.token,
+      userId: data.userId,
+      email: data.email
+    });
+
+    navigate("/home");
+
+  } catch (err) {
+    setError(err?.message || "Eroare la autentificare");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   return (
     <div className="wrapper">

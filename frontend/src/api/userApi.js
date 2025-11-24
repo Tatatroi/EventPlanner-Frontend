@@ -8,7 +8,6 @@ export async function registerUser(data) {
     });
 
     if (!response.ok) {
-        // încercăm să citim mesajul de eroare din body, dacă există
         let errBody;
         try {
             errBody = await response.json();

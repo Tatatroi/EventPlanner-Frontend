@@ -39,3 +39,15 @@
 .back-button:hover {
   background-color: #1c5bb8;
 }
+
+.invite-people-button
+{
+  padding: 10px 20px;
+  margin-left: 120px;
+  border-radius: 8px;
+  background-color: #708993;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}

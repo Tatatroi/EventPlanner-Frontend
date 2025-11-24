@@ -3,6 +3,7 @@ import LoginPage from "./Components/LoginPage";
 import RegisterPage from "./Components/RegisterPage";
 import HomePage from "./Components/HomePage";
 import EventDetails from "./Components/EventDetails";
+import InvitePeople from "./Components/InvitePeople";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/event/:id" element={<EventDetails />} />
+      <Route path="/invite-people/:id" element={<InvitePeople/>} />
     </Routes>
   );
 }
