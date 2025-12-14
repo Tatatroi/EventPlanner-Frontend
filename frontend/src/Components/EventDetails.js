@@ -10,6 +10,9 @@ function EventDetails() {
 
   const goInvite = () => navigate(`/invite-people/${id}`)
 
+  const goToPhotos = () => navigate(`/event/${id}/photos`);
+
+
   return (
     <div className="event-details-container">
       <div className="event-details-card">
@@ -22,6 +25,10 @@ function EventDetails() {
 
         <button className="back-button" onClick={goBack}>
           Back to My Events
+        </button>
+
+        <button className="photos-button" onClick={goToPhotos}>
+          Photos
         </button>
 
         <button className="invite-people-button" onClick={goInvite}>
