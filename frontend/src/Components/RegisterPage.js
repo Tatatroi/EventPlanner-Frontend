@@ -7,6 +7,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const [registerData, setRegisterData] = useState({
     name: "",
@@ -23,74 +24,114 @@ export default function RegisterPage() {
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    // client-side validation for password confirmation
+    setError("");
+    setSuccess("");
+
     if (registerData.password !== registerData.confirmPassword) {
-      setError("Parolele nu coincid");
-      setSuccess("");
+      setError("Passwords do not match");
       return;
     }
+
+    setSubmitting(true);
     try {
       const { name, lastName, email, password } = registerData;
       await registerUser({ name, lastName, email, password });
-  setSuccess("Înregistrare reușită!");
-  setError("");
-  // after successful registration go to login
-  navigate("/login");
+      setSuccess("Account created successfully!");
+      
+      // Brief delay so they can see the success message before navigating
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setError(err.message);
-      setSuccess("");
+      setError(err.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="wrapper">
       <div className="form-box">
-        <h1>Register</h1>
+        <h1>Create Account</h1>
+        <p className="subtitle">Join us to start planning and managing your events.</p>
+
         <form onSubmit={handleRegisterSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="First Name"
-            value={registerData.name}
-            onChange={handleRegisterChange}
-            required
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={registerData.lastName}
-            onChange={handleRegisterChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={registerData.email}
-            onChange={handleRegisterChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={registerData.password}
-            onChange={handleRegisterChange}
-            required
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={registerData.confirmPassword}
-            onChange={handleRegisterChange}
-            required
-          />
-          <button type="submit">Register</button>
-          {success && <p style={{ color: "green" }}>{success}</p>}
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <div className="error-text" role="alert">{error}</div>}
+          {success && <div className="success-text" style={{ 
+            color: "#166534", 
+            backgroundColor: "#dcfce7", 
+            padding: "10px", 
+            borderRadius: "6px", 
+            fontSize: "13px",
+            marginBottom: "10px",
+            border: "1px solid #bbf7d0"
+          }}>{success}</div>}
+
+          {/* Side-by-side names look more professional */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
+            <div className="input-group">
+              <label>First Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Jane"
+                value={registerData.name}
+                onChange={handleRegisterChange}
+                required
+              />
+            </div>
+            <div className="input-group">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Doe"
+                value={registerData.lastName}
+                onChange={handleRegisterChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="name@example.com"
+              value={registerData.email}
+              onChange={handleRegisterChange}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              value={registerData.password}
+              onChange={handleRegisterChange}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="••••••••"
+              value={registerData.confirmPassword}
+              onChange={handleRegisterChange}
+              required
+            />
+          </div>
+
+          <button type="submit" disabled={submitting}>
+            {submitting ? "Creating Account..." : "Register"}
+          </button>
         </form>
+
         <p className="toggle-text">
           Already have an account? <Link to="/login">Sign In</Link>
         </p>
