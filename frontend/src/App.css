@@ -1,4 +1,10 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  padding-top: 2rem;
 }

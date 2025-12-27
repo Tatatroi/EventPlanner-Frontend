@@ -3,66 +3,113 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #19183B;
+  background-color: var(--bg-main); 
 }
 
 .form-box {
-  width: 350px;
-  padding: 30px;
-  background-color: #708993;
-  border: 3px solid #A1C2BD;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  padding: 48px;
+  background-color: var(--bg-card); 
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
   text-align: center;
-  transition: all 0.4s ease;
 }
 
 h1 {
-  margin-bottom: 25px;
-  font-size: 24px;
-  color: #E7F2EF;
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 32px;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
+}
+
+.input-group {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
 }
 
 input {
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 15px;
+  transition: all 0.2s;
+  background-color: #f8fafc;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 button {
-  padding: 10px;
-  background-color: #A1C2BD;
+  margin-top: 10px;
+  padding: 14px;
+  background-color: var(--primary);
   border: none;
   border-radius: 6px;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s;
 }
 
 button:hover {
-  background-color: #19183B;
+  background-color: var(--primary-hover);
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 10px;
 }
 
 .toggle-text {
-  margin-top: 15px;
+  margin-top: 24px;
   font-size: 14px;
-  color: #333;
+  color: var(--text-muted);
 }
 
-.toggle-button {
-  background: none;
-  border: none;
-  color: #19183B;
-  cursor: pointer;
-  font-size: 14px;
+.toggle-text a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.toggle-text a:hover {
   text-decoration: underline;
-  padding: 0;
 }
