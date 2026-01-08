@@ -32,6 +32,7 @@ function EventPhotos() {
 
     const formData = new FormData();
     formData.append("file", file);
+    console.log("File appended to FormData:", file);
     const idEv = Number(id);
     formData.append("eventId", idEv);
     
@@ -90,6 +91,8 @@ function EventPhotos() {
   // Delete photo
   const deletePhoto = (photoId) => {
     const userId = localStorage.getItem("userId");
+    console.log("userId to delete:", userId);
+
     if (!userId) {
       alert("Nu ești autentificat. Te rog să te loghezi.");
       return;
@@ -103,10 +106,12 @@ function EventPhotos() {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    fetch(`http://localhost:8081/api/photos/${photoId}`, {
+    fetch(`http://localhost:8081/api/photos/${photoId}?userId=${userId}`, {
       method: "DELETE",
-      credentials: "include",
-      headers: headers
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
     })
       .then((res) => {
         console.log("Delete response status:", res.status);
@@ -116,6 +121,7 @@ function EventPhotos() {
         }
         if (!res.ok) {
           return res.text().then(text => {
+            console.log(res);
             console.error("Delete failed - Response:", text);
             throw new Error(`Delete failed: ${text}`);
           });
