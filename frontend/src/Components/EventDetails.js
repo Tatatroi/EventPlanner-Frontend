@@ -69,7 +69,7 @@ function EventDetails() {
     if (error) return <div className="event-details-container error-message">Error: {error}</div>;
     
     const { name, description, startTime, endTime, location } = eventData;
-
+  const goToPhotos = () => navigate(`/event/${eventId}/photos`);
     return (
         <div className="event-details-container">
             <div className="event-details-card">
@@ -106,6 +106,9 @@ function EventDetails() {
                     </button>
                     <button className="invite-button" onClick={() => navigate(`/invite-people/${eventId}`)}>
                         Invite Guests
+                    </button>
+                    <button className="invite-button" onClick={goToPhotos}>
+                        Photos
                     </button>
                 </div>
             </div>
