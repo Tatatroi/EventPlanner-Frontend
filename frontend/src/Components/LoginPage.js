@@ -16,58 +16,65 @@ export default function LoginPage() {
   };
 
   const handleLoginSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setSubmitting(true);
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
 
-  try {
-    const data = await loginUser(loginData);
-
-    // data = { token, userId, email }
-    saveAuthData({
-      token: data.token,
-      userId: data.userId,
-      email: data.email
-    });
-
-    navigate("/home");
-
-  } catch (err) {
-    setError(err?.message || "Eroare la autentificare");
-  } finally {
-    setSubmitting(false);
-  }
-};
-
+    try {
+      const data = await loginUser(loginData);
+      saveAuthData({
+        token: data.token,
+        userId: data.userId,
+        email: data.email
+      });
+      navigate("/home");
+    } catch (err) {
+      setError(err?.message || "Invalid email or password");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="wrapper">
       <div className="form-box">
-        <h1>Sign In</h1>
+        <h1>Welcome Back</h1>
+        <p className="subtitle">Please enter your details to sign in.</p>
+        
         <form onSubmit={handleLoginSubmit}>
-          {error && <p className="error-text" role="alert">{error}</p>}
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={loginData.email}
-            onChange={handleLoginChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={loginData.password}
-            onChange={handleLoginChange}
-            required
-          />
+          {error && <div className="error-text" role="alert">{error}</div>}
+          
+          <div className="input-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="name@company.com"
+              value={loginData.email}
+              onChange={handleLoginChange}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              required
+            />
+          </div>
+
           <button type="submit" disabled={submitting}>
             {submitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
         <p className="toggle-text">
-          Don’t have an account? <Link to="/register">Register</Link>
+          Don’t have an account? <Link to="/register">Create one</Link>
         </p>
       </div>
     </div>
