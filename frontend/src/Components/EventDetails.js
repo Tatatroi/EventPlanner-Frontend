@@ -69,8 +69,7 @@ function EventDetails() {
     if (error) return <div className="event-details-container error-message">Error: {error}</div>;
     
     const { name, description, startTime, endTime, location } = eventData;
-
-  const goToPhotos = () => navigate(`/event/${id}/photos`);
+  const goToPhotos = () => navigate(`/event/${eventId}/photos`);
     return (
         <div className="event-details-container">
             <div className="event-details-card">
