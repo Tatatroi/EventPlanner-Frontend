@@ -27,3 +27,23 @@ export const fetchEventDetails = async (eventId) => {
         throw error;
     }
 };
+
+export const updateEvent = async (eventId, eventData) => {
+    const token = getAuthToken();
+    
+    const response = await fetch(`${BASE_URL}/${eventId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(eventData)
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update event');
+    }
+
+    return await response.json();
+};
