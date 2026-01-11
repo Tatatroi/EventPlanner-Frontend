@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../api/userApi";
+import { useSearchParams } from "react-router-dom";
 import "./Login.css";
 
 export default function RegisterPage() {
@@ -8,11 +9,13 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [searchParams] = useSearchParams();
+  const emailFromUrl = searchParams.get("email");
 
   const [registerData, setRegisterData] = useState({
     name: "",
     lastName: "",
-    email: "",
+    email: emailFromUrl | "",
     password: "",
     confirmPassword: "",
   });

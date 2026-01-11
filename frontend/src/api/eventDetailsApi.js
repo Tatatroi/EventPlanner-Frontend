@@ -47,3 +47,23 @@ export const updateEvent = async (eventId, eventData) => {
 
     return await response.json();
 };
+
+
+export const notifyGuests = async (eventId) => {
+    const token = getAuthToken();
+    const BASE_URL = "http://localhost:8081/events";
+
+    const response = await fetch(`${BASE_URL}/${eventId}/notify-guests`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to send updates.');
+    }
+
+    return await response.text();
+};
