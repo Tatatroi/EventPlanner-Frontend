@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchEventDetails } from '../api/eventDetailsApi'; 
+import { fetchEventDetails, notifyGuests } from '../api/eventDetailsApi'; 
 import { getAuthToken } from '../auth/UserDataFunction'; 
 import { deleteEvent } from '../api/deleteEventApi';
 import "./EventDetails.css";
@@ -30,7 +30,8 @@ const initialEventData = {
         address: "",
         latitude: null, 
         longitude: null
-    }
+    },
+    organizer: null // Adăugat pentru siguranță
 };
 
 function EventDetails() {
@@ -41,7 +42,10 @@ function EventDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [previewPhotos, setPreviewPhotos] = useState([]);
-
+    
+    // Luăm ID-ul curent din localStorage
+    const currentUserId = localStorage.getItem("userId");
+    
     // State pentru cronometru
     const [timeLeft, setTimeLeft] = useState({});
     const [eventStatus, setEventStatus] = useState("LOADING"); 
@@ -69,10 +73,10 @@ function EventDetails() {
                     endTime: data.end_time || data.endTime,
                     location: data.location || { name: 'N/A', address: '', latitude: null, longitude: null }
                 });
+
                 const photosRes = await fetch(`http://localhost:8081/api/photos/event/${eventId}`);
                 if (photosRes.ok) {
                     const photosData = await photosRes.json();
-                    // Păstrăm doar ultimele 4 poze (sau primele 4)
                     setPreviewPhotos(photosData.slice(0, 4));
                 }
 
@@ -143,6 +147,19 @@ function EventDetails() {
         }
     };
 
+    const handleSendUpdate = async () => {
+        if (!window.confirm("Send email update with the current agenda to all CONFIRMED guests?")) {
+            return;
+        }
+        
+        try {
+            await notifyGuests(eventId);
+            alert("Update emails sent successfully!");
+        } catch (err) {
+            alert("Could not send updates: " + err.message);
+        }
+    };
+
     const formatDateTime = (dateTimeString) => {
         if (!dateTimeString) return "N/A";
         try {
@@ -156,7 +173,6 @@ function EventDetails() {
 
     const { name, description, startTime, endTime, location } = eventData;
     const goToPhotos = () => navigate(`/event/${eventId}/photos`);
-
     const goToGallery = () => navigate(`/event/${eventId}/gallery`);
 
     const hasValidCoords = location && 
@@ -167,13 +183,12 @@ function EventDetails() {
         ? [location.latitude, location.longitude] 
         : [46.7712, 23.6236]; 
 
+
+    const isOrganizer = eventData && eventData.organizer && String(eventData.organizer.idUser) === String(currentUserId);
+
     const renderStatusBadge = () => {
-        if (eventStatus === "ENDED") {
-            return <div className="status-badge ended">Event Ended</div>;
-        }
-        if (eventStatus === "ONGOING") {
-            return <div className="status-badge ongoing">Happening Now!</div>;
-        }
+        if (eventStatus === "ENDED") return <div className="status-badge ended">Event Ended</div>;
+        if (eventStatus === "ONGOING") return <div className="status-badge ongoing">Happening Now!</div>;
         if (eventStatus === "FUTURE" && timeLeft.days !== undefined) {
             return (
                 <div className="status-badge future">
@@ -187,7 +202,7 @@ function EventDetails() {
 
     if (loading) return <div className="event-details-container loading">Loading...</div>;
     if (error) return <div className="event-details-container error-message">Error: {error}</div>;
-    
+
     return (
         <div className="event-details-container">
             <div className="event-details-card">
@@ -277,26 +292,46 @@ function EventDetails() {
                             <p>No photos yet. Be the first to upload!</p>
                         </div>
                     )}
-                </div>             
+                </div>            
 
+                {/* --- BUTOANELE DE ACȚIUNE --- */}
                 <div className="action-buttons">
                     <button className="back-button" onClick={() => navigate("/home")}>← Back</button>
-                    <button className="invite-button" onClick={() => navigate(`/invite-people/${eventId}`)}>Invite Guests</button>
-                    <button className="invite-button" onClick={goToPhotos}>Upload Photos</button>
-                    <button 
-                        className="invite-button" 
-                        onClick={handleEdit}
-                        style={{ backgroundColor: '#ffc107', color: '#000', marginRight: '10px' }}
-                    >
-                        Edit Event
-                    </button>
-                    <button 
-                        className="delete-button" 
-                        onClick={handleDelete}
-                        style={{ backgroundColor: '#dc3545', color: 'white', marginLeft: 'auto', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer' }}
-                    >
-                        Delete Event
-                    </button>
+                    
+                    {/* Butonul de Poze este public (pentru toți participanții) */}
+                    <button className="invite-button" onClick={goToPhotos}>Gallery / Upload</button>
+
+                    {/* --- ZONA PROTEJATĂ: Doar pentru Organizator --- */}
+                    {isOrganizer && (
+                        <>
+                            <button className="invite-button" onClick={() => navigate(`/invite-people/${eventId}`)}>Invite Guests</button>
+                            
+                            <button 
+                                className="invite-button" 
+                                onClick={handleSendUpdate}
+                                style={{ backgroundColor: '#28a745', marginLeft: '10px' }} // Verde
+                                title="Send the description/agenda to all confirmed guests"
+                            >
+                                Send Agenda
+                            </button>
+
+                            <button 
+                                className="invite-button" 
+                                onClick={handleEdit}
+                                style={{ backgroundColor: '#ffc107', color: '#000', marginLeft: '10px' }}
+                            >
+                                Edit Event
+                            </button>
+                            
+                            <button 
+                                className="delete-button" 
+                                onClick={handleDelete}
+                                style={{ backgroundColor: '#dc3545', color: 'white', marginLeft: 'auto', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer' }}
+                            >
+                                Delete Event
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
