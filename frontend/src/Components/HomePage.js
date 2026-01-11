@@ -17,8 +17,8 @@ function HomePage() {
     navigate("/");
   };
 
-  const goToEvent = (id) => {
-    navigate(`/event/${id}`);
+  const goToEvent = (idEvent) => {
+    navigate(`/event/${idEvent}`);
   };
 
   useEffect(() => {
@@ -49,8 +49,10 @@ function HomePage() {
 
   const ITEMS_PER_PAGE = 3;
 
-  const organizerEvents = allEvents.filter((e) => e.role === "Organizer");
-  const attendeeEvents = allEvents.filter((e) => e.role === "attendee");
+  // const organizerEvents = allEvents.filter((e) => e.role === "Organizer");
+  // const attendeeEvents = allEvents.filter((e) => e.role === "attendee");
+  const organizerEvents = allEvents.filter((e) => e.role && e.role.toLowerCase() === "organizer");
+  const attendeeEvents = allEvents.filter((e) => !e.role || e.role.toLowerCase() !== "organizer");
 
   const handleDeleteFromDashboard = async (e, idToDelete) => {
       e.stopPropagation();
@@ -59,7 +61,7 @@ function HomePage() {
           try {
               await deleteEvent(idToDelete);
               
-              setAllEvents(prevEvents => prevEvents.filter(event => event.eventId !== idToDelete));
+              setAllEvents(prevEvents => prevEvents.filter(event => event.idEvent !== idToDelete));
               
           } catch (err) {
               console.error("Could not delete", err);
@@ -117,6 +119,18 @@ function HomePage() {
       setAttIndex(attIndex - ITEMS_PER_PAGE);
     }
   };
+
+
+  console.log("--- DEBUG DATA ---");
+  console.log("Toate evenimentele:", allEvents);
+  if (attendeeEvents.length > 0) {
+      console.log("Exemplu Attendee Event:", attendeeEvents[0]);
+      console.log("Are idEvent?", attendeeEvents[0].idEvent);
+      console.log("Are eventId?", attendeeEvents[0].eventId);
+      console.log("Are id?", attendeeEvents[0].id);
+  } else {
+      console.log("Lista attendeeEvents este goală!");
+  }
 
   return (
     <div className="home-container">
@@ -202,7 +216,7 @@ function HomePage() {
           {organizerEvents
             .slice(myIndex, myIndex + ITEMS_PER_PAGE)
             .map((eventUser) => (
-              <div className="event-box" key={eventUser.eventId}>
+              <div className="event-box" key={eventUser.idEvent}>
                 
                 {/* 3. MODIFICARE AICI: Header cu Badge si Buton Delete */}
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
@@ -210,7 +224,7 @@ function HomePage() {
                     
                     {/* Butonul Coș de Gunoi */}
                     <button 
-                        onClick={(e) => handleDeleteFromDashboard(e, eventUser.eventId)}
+                        onClick={(e) => handleDeleteFromDashboard(e, eventUser.idEvent)}
                         title="Delete Event"
                         style={{
                             background: 'transparent',
@@ -240,10 +254,10 @@ function HomePage() {
                 <div className="event-info">
                    {/* Dacă ai un nume real al evenimentului în obiectul eventUser, folosește-l aici. 
                        Momentan am lăsat ID-ul cum aveai tu. */}
-                   <p className="event-title">Event #{eventUser.eventId}</p>
+                   <p className="event-title">Event #{eventUser.idEvent}</p>
                 </div>
 
-                <button className="event-button" onClick={() => goToEvent(eventUser.eventId)}>
+                <button className="event-button" onClick={() => goToEvent(eventUser.idEvent)}>
                   View Details
                 </button>
               </div>
@@ -279,12 +293,12 @@ function HomePage() {
           {attendeeEvents
             .slice(attIndex, attIndex + ITEMS_PER_PAGE)
             .map((eventUser) => (
-              <div className="event-box" key={eventUser.eventId}>
+              <div className="event-box" key={eventUser.idEvent}>
                 <div className="event-info">
                    <span className="event-badge attendee">Guest</span>
-                   <p className="event-title">Event #{eventUser.eventId}</p>
+                   <p className="event-title">Event #{eventUser.idEvent}</p>
                 </div>
-                <button className="event-button" onClick={() => goToEvent(eventUser.eventId)}>
+                <button className="event-button" onClick={() => goToEvent(eventUser.idEvent)}>
                   View Details
                 </button>
               </div>

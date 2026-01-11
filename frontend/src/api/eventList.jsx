@@ -1,5 +1,5 @@
 export default async function EventList(userId) {
-    const response = await fetch(`http://localhost:8081/event-users/user/${userId}`, {
+    const response = await fetch(`http://localhost:8081/events/user/${userId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
