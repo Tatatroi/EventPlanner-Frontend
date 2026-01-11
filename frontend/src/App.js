@@ -6,6 +6,7 @@ import EventDetails from "./Components/EventDetails";
 import InvitePeople from "./Components/InvitePeople";
 import CreateEvent from "./Components/CreateEvent";
 import EventPhotos from "./Components/EventPhotos";
+import EventGallery from "./Components/EventGallery.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/invite-people/:id" element={<InvitePeople/>} />
       <Route path="/create-event" element={<CreateEvent/>}/>
       <Route path="/event/:id/photos" element={<EventPhotos />} />
+      <Route path="/event/:id/gallery" element={<EventGallery />} />
     </Routes>
   );
 }
