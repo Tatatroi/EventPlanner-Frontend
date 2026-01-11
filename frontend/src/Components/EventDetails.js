@@ -42,6 +42,7 @@ function EventDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [previewPhotos, setPreviewPhotos] = useState([]);
+    const [userRole, setUserRole] = useState("");
     
     // Luăm ID-ul curent din localStorage
     const currentUserId = localStorage.getItem("userId");
@@ -78,6 +79,21 @@ function EventDetails() {
                 if (photosRes.ok) {
                     const photosData = await photosRes.json();
                     setPreviewPhotos(photosData.slice(0, 4));
+                }
+
+                if (currentUserId) {
+                    const roleRes = await fetch(`http://localhost:8081/event-users/${eventId}/${currentUserId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}` // Dacă ai nevoie de token
+                        }
+                    });
+                    
+                    if (roleRes.ok) {
+                        const roleData = await roleRes.json();
+                        // Backend-ul returnează un obiect care are câmpul "role"
+                        console.log("Rolul meu la acest event:", roleData.role);
+                        setUserRole(roleData.role); 
+                    }
                 }
 
                 setError(null);
@@ -184,7 +200,7 @@ function EventDetails() {
         : [46.7712, 23.6236]; 
 
 
-    const isOrganizer = eventData && eventData.organizer && String(eventData.organizer.idUser) === String(currentUserId);
+    const isOrganizer = userRole && userRole.toLowerCase() === 'organizer';
 
     const renderStatusBadge = () => {
         if (eventStatus === "ENDED") return <div className="status-badge ended">Event Ended</div>;

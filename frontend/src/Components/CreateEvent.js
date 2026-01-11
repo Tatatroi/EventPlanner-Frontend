@@ -92,6 +92,7 @@ function CreateEvent() {
             latitude: mapCoordinates.lat,
             longitude: mapCoordinates.lng
         },
+        coOrganizerEmail: organiser2
       };
 
       await createEvent(eventPayload, userId);
@@ -210,8 +211,8 @@ function CreateEvent() {
             <input type="text" value={organiser1} readOnly />
           </div>
           <div className="form-group">
-            <label>Co-Organizer</label>
-            <input type="text" value={organiser2} onChange={(e) => setOrganiser2(e.target.value)} />
+            <label>Enter Co-Organizer Email</label>
+            <input type="email" value={organiser2} onChange={(e) => setOrganiser2(e.target.value)} />
           </div>
         </div>
 
