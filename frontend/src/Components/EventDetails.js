@@ -43,7 +43,7 @@ function EventDetails() {
 
     // State pentru cronometru
     const [timeLeft, setTimeLeft] = useState({});
-    const [eventStatus, setEventStatus] = useState("LOADING"); // FUTURE, ONGOING, ENDED
+    const [eventStatus, setEventStatus] = useState("LOADING"); 
 
     useEffect(() => {
         if (!getAuthToken()) {
@@ -58,7 +58,6 @@ function EventDetails() {
                 
                 console.log("Debug Data:", data);
 
-                // MAPARE CORECTĂ A DATELOR (Fix-ul de data trecută)
                 setEventData({
                     ...data,
                     startTime: data.start_time || data.startTime, 
@@ -79,7 +78,6 @@ function EventDetails() {
     }, [eventId, navigate]); 
 
 
-    // LOGICA DE COUNTDOWN
     useEffect(() => {
         const calculateTimeLeft = () => {
             if (!eventData.startTime) return;
@@ -155,7 +153,6 @@ function EventDetails() {
         ? [location.latitude, location.longitude] 
         : [46.7712, 23.6236]; 
 
-    // Funcția care desenează Badge-ul
     const renderStatusBadge = () => {
         if (eventStatus === "ENDED") {
             return <div className="status-badge ended">Event Ended</div>;
