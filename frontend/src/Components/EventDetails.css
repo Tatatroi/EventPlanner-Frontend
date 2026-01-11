@@ -127,3 +127,43 @@
     text-align: center;
     padding: 100px;
 }
+
+/* Stiluri pentru Badge Countdown */
+.status-badge {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white; /* Text alb */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
+    animation: fadeIn 0.5s ease;
+    /* IMPORTANT: Asigură-te că background-ul se aplică */
+}
+
+/* Gradient Albastru pentru Future */
+.status-badge.future {
+    background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Gradient Verde pentru Ongoing */
+.status-badge.ongoing {
+    background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%);
+    color: #1a4435;
+}
+
+/* Gri pentru Ended */
+.status-badge.ended {
+    background-color: #6c757d;
+}
+
+.event-details-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

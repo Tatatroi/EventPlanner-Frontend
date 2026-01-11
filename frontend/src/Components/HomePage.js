@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./HomePage.css";
-import profileImg from "../Assets/profilepicture.png";
+// import profileImg from "../Assets/profilepicture.png";
 import { useNavigate } from "react-router-dom";
 import EventList from "../api/eventList";
+import { deleteEvent } from "../api/deleteEventApi";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -50,6 +51,22 @@ function HomePage() {
 
   const organizerEvents = allEvents.filter((e) => e.role === "Organizer");
   const attendeeEvents = allEvents.filter((e) => e.role === "attendee");
+
+const handleDeleteFromDashboard = async (e, idToDelete) => {
+    e.stopPropagation();
+    
+    if (window.confirm("Are you sure you want to delete this event?")) {
+        try {
+            await deleteEvent(idToDelete);
+            
+            setAllEvents(prevEvents => prevEvents.filter(event => event.eventId !== idToDelete));
+            
+        } catch (err) {
+            console.error("Could not delete", err);
+            alert("Failed to delete event.");
+        }
+    }
+  };
 
   const nextMyEvents = () => {
     if (myIndex + ITEMS_PER_PAGE < organizerEvents.length) {
@@ -142,10 +159,46 @@ function HomePage() {
             .slice(myIndex, myIndex + ITEMS_PER_PAGE)
             .map((eventUser) => (
               <div className="event-box" key={eventUser.eventId}>
+                
+                {/* 3. MODIFICARE AICI: Header cu Badge si Buton Delete */}
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+                    <span className="event-badge">Organizer</span>
+                    
+                    {/* Butonul Coș de Gunoi */}
+                    <button 
+                        onClick={(e) => handleDeleteFromDashboard(e, eventUser.eventId)}
+                        title="Delete Event"
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '1.2rem',
+                            color: '#dc3545', // Culoare Roșie
+                            padding: '0 5px'
+                        }}
+                    >
+                        <svg 
+                className="delete-icon-svg" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+            >
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+                    </button>
+                </div>
+
                 <div className="event-info">
-                   <span className="event-badge">Organizer</span>
+                   {/* Dacă ai un nume real al evenimentului în obiectul eventUser, folosește-l aici. 
+                       Momentan am lăsat ID-ul cum aveai tu. */}
                    <p className="event-title">Event #{eventUser.eventId}</p>
                 </div>
+
                 <button className="event-button" onClick={() => goToEvent(eventUser.eventId)}>
                   View Details
                 </button>
