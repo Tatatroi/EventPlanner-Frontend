@@ -46,6 +46,10 @@ function EventDetails() {
     const [timeLeft, setTimeLeft] = useState({});
     const [eventStatus, setEventStatus] = useState("LOADING"); 
 
+    const handleEdit = () => {
+        navigate(`/edit-event/${eventId}`);
+    };
+
     useEffect(() => {
         if (!getAuthToken()) {
             navigate('/login');
@@ -279,6 +283,13 @@ function EventDetails() {
                     <button className="back-button" onClick={() => navigate("/home")}>← Back</button>
                     <button className="invite-button" onClick={() => navigate(`/invite-people/${eventId}`)}>Invite Guests</button>
                     <button className="invite-button" onClick={goToPhotos}>Upload Photos</button>
+                    <button 
+                        className="invite-button" 
+                        onClick={handleEdit}
+                        style={{ backgroundColor: '#ffc107', color: '#000', marginRight: '10px' }}
+                    >
+                        Edit Event
+                    </button>
                     <button 
                         className="delete-button" 
                         onClick={handleDelete}

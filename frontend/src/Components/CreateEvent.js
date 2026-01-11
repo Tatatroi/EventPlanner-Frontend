@@ -35,7 +35,9 @@ function LocationPicker({ position, setPosition }) {
 function CreateEvent() {
   const navigate = useNavigate();
 
+  // --- STATE ---
   const [eventName, setEventName] = useState("");
+  const [description, setDescription] = useState(""); // 1. STATE PENTRU DESCRIERE
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -78,8 +80,10 @@ function CreateEvent() {
       const startDateTime = `${eventDate}T${eventTime || "00:00"}:00`;
       const endDateTime = endDate && endTime ? `${endDate}T${endTime}:00` : startDateTime;
 
+      // 2. ADĂUGĂM DESCRIEREA ÎN PAYLOAD
       const eventPayload = {
         name: eventName,
+        description: description, // <--- AICI
         start_time: startDateTime,
         end_time: endDateTime,
         location: { 
@@ -116,6 +120,25 @@ function CreateEvent() {
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
           />
+        </div>
+
+        {/* 3. INPUT PENTRU DESCRIERE (TEXTAREA) */}
+        <div className="form-group">
+            <label>Description</label>
+            <textarea
+                placeholder="Describe your event (agenda, dress code, details...)"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows="4"
+                style={{ 
+                    width: "100%", 
+                    padding: "10px", 
+                    borderRadius: "5px", 
+                    border: "1px solid #ccc",
+                    resize: "vertical",
+                    fontFamily: "inherit"
+                }}
+            />
         </div>
 
         <h3 className="form-section-title">Date & Time</h3>
