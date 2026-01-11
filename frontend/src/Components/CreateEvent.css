@@ -129,3 +129,23 @@
   font-size: 14px;
   border: 1px solid #fecaca;
 }
+
+/* Fix pentru containerul Leaflet */
+.leaflet-container {
+    width: 100%;
+    height: 100%;
+    /* Z-index mic pentru a nu acoperi meniurile drop-down sau header-ul */
+    z-index: 1; 
+    font-family: sans-serif;
+}
+
+/* Opțional: Stilizează containerul hărții ca să arate mai bine */
+.form-group .leaflet-div-icon {
+    background: transparent;
+    border: none;
+}
+
+/* Dacă vrei ca harta să aibă un aspect "apasabil" (cursor pointer) */
+.leaflet-interactive {
+    cursor: pointer;
+}
