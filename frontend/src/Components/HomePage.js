@@ -52,20 +52,46 @@ function HomePage() {
   const organizerEvents = allEvents.filter((e) => e.role === "Organizer");
   const attendeeEvents = allEvents.filter((e) => e.role === "attendee");
 
-const handleDeleteFromDashboard = async (e, idToDelete) => {
-    e.stopPropagation();
+  const handleDeleteFromDashboard = async (e, idToDelete) => {
+      e.stopPropagation();
+      
+      if (window.confirm("Are you sure you want to delete this event?")) {
+          try {
+              await deleteEvent(idToDelete);
+              
+              setAllEvents(prevEvents => prevEvents.filter(event => event.eventId !== idToDelete));
+              
+          } catch (err) {
+              console.error("Could not delete", err);
+              alert("Failed to delete event.");
+          }
+      }
+    };
+
+    const getNextEventDate = () => {
+    const now = new Date();
+    // Filtrăm doar evenimentele din viitor
+    const futureEvents = allEvents.filter(e => {
+        // Verificăm ambele formate de dată (snake_case și camelCase)
+        const dateStr = e.start_time || e.startTime;
+        return dateStr && new Date(dateStr) > now;
+    });
+
+    if (futureEvents.length === 0) return "No upcoming events";
+
+    // Le sortăm cronologic (cel mai apropiat primul)
+    futureEvents.sort((a, b) => {
+        const dateA = new Date(a.start_time || a.startTime);
+        const dateB = new Date(b.start_time || b.startTime);
+        return dateA - dateB;
+    });
+
+    const nextEvent = futureEvents[0];
+    const dateObj = new Date(nextEvent.start_time || nextEvent.startTime);
     
-    if (window.confirm("Are you sure you want to delete this event?")) {
-        try {
-            await deleteEvent(idToDelete);
-            
-            setAllEvents(prevEvents => prevEvents.filter(event => event.eventId !== idToDelete));
-            
-        } catch (err) {
-            console.error("Could not delete", err);
-            alert("Failed to delete event.");
-        }
-    }
+    // Formatăm data frumos (ex: 15 Oct)
+    return dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + 
+           " - " + (nextEvent.name || "Event");
   };
 
   const nextMyEvents = () => {
@@ -120,7 +146,25 @@ const handleDeleteFromDashboard = async (e, idToDelete) => {
 
       {/* --- MAIN CONTENT --- */}
       <main className="main-content">
-        
+        {/* --- DASHBOARD ANALYITCS --- */}
+         <div className="stats-container">
+            <div className="stat-card blue">
+                <div className="stat-value">{organizerEvents.length}</div>
+                <div className="stat-label">Events Hosted</div>
+                <div className="stat-icon">🎤</div>
+            </div>
+            <div className="stat-card green">
+                <div className="stat-value">{attendeeEvents.length}</div>
+                <div className="stat-label">Attending</div>
+                <div className="stat-icon">🎉</div>
+            </div>
+            <div className="stat-card purple">
+                <div className="stat-value small">{getNextEventDate()}</div>
+                <div className="stat-label">Next Up</div>
+                <div className="stat-icon">⏳</div>
+            </div>
+        </div>
+
         {/* --- MY EVENTS SECTION --- */}
         <div className="section-header">
           <h2 className="home-title">My Events</h2>
