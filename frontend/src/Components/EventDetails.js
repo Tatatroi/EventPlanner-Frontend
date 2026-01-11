@@ -40,6 +40,7 @@ function EventDetails() {
     const [eventData, setEventData] = useState(initialEventData);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [previewPhotos, setPreviewPhotos] = useState([]);
 
     // State pentru cronometru
     const [timeLeft, setTimeLeft] = useState({});
@@ -64,6 +65,13 @@ function EventDetails() {
                     endTime: data.end_time || data.endTime,
                     location: data.location || { name: 'N/A', address: '', latitude: null, longitude: null }
                 });
+                const photosRes = await fetch(`http://localhost:8081/api/photos/event/${eventId}`);
+                if (photosRes.ok) {
+                    const photosData = await photosRes.json();
+                    // Păstrăm doar ultimele 4 poze (sau primele 4)
+                    setPreviewPhotos(photosData.slice(0, 4));
+                }
+
                 setError(null);
             } catch (err) {
                 const errorMessage = err.message || "Failed to load event details.";
@@ -145,6 +153,8 @@ function EventDetails() {
     const { name, description, startTime, endTime, location } = eventData;
     const goToPhotos = () => navigate(`/event/${eventId}/photos`);
 
+    const goToGallery = () => navigate(`/event/${eventId}/gallery`);
+
     const hasValidCoords = location && 
                            location.latitude !== 0 && location.latitude !== null &&
                            location.longitude !== 0 && location.longitude !== null;
@@ -211,7 +221,7 @@ function EventDetails() {
                                 rel="noopener noreferrer"
                                 style={{ display: 'inline-block', marginBottom: '10px', color: '#007bff', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}
                             >
-                                🚗 Get Directions on Google Maps
+                                Get Directions on Google Maps
                             </a>
                         )}
 
@@ -236,10 +246,39 @@ function EventDetails() {
                     </div>
                 </div>
 
+                {/* --- SECȚIUNE PHOTO TEASER --- */}
+                <div className="photo-teaser-section">
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'10px'}}>
+                        <h3>Event Gallery</h3>
+                        {previewPhotos.length > 0 && (
+                            <span style={{fontSize:'0.9rem', color:'#007bff', cursor:'pointer'}} onClick={goToGallery}>
+                                View Album Gallery →
+                            </span>
+                        )}
+                    </div>
+
+                    {previewPhotos.length > 0 ? (
+                        <div className="teaser-grid">
+                            {previewPhotos.map(photo => (
+                                <div key={photo.idPhoto} className="teaser-item" onClick={goToPhotos}>
+                                    <img 
+                                        src={`http://localhost:8081/api/photos/files/${photo.idPhoto}`} 
+                                        alt="Event preview" 
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="empty-gallery-teaser" onClick={goToPhotos}>
+                            <p>No photos yet. Be the first to upload!</p>
+                        </div>
+                    )}
+                </div>             
+
                 <div className="action-buttons">
                     <button className="back-button" onClick={() => navigate("/home")}>← Back</button>
                     <button className="invite-button" onClick={() => navigate(`/invite-people/${eventId}`)}>Invite Guests</button>
-                    <button className="invite-button" onClick={goToPhotos}>Photos</button>
+                    <button className="invite-button" onClick={goToPhotos}>Upload Photos</button>
                     <button 
                         className="delete-button" 
                         onClick={handleDelete}
