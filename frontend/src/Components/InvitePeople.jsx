@@ -5,7 +5,9 @@ import {
   getParticipantsByEvent,
   inviteSingleParticipant,
   deleteParticipantFromEvent,
+  inviteUsersToEvent  
 } from "../api/participantsLists";
+import * as XLSX from "xlsx";
 
 function ParticipantsList({ participants, onDelete }) {
   const getStatusText = (status) => {
@@ -80,6 +82,7 @@ export default function InvitePeople() {
   const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const loadParticipants = async () => {
     if (!Number.isFinite(id)) return;
@@ -116,9 +119,44 @@ export default function InvitePeople() {
     if (!window.confirm("Remove this participant?")) return;
     try {
       await deleteParticipantFromEvent(id, participantId);
-      setParticipants((prev) => prev.filter((p) => (p.id || p.userId) !== participantId));
+      setParticipants((prev) =>
+        prev.filter((p) => (p.id || p.userId) !== participantId)
+      );
     } catch (e) {
       setError("Delete failed");
+    }
+  };
+
+  const handleExcelUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError("");
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const emails = rows
+        .map(r => r.email || r.Email || r.EMAIL)
+        .filter(Boolean);
+
+      if (emails.length === 0) {
+        throw new Error("Excel must contain column named 'email'");
+      }
+
+      await inviteUsersToEvent(id, emails);
+      await loadParticipants();
+
+      alert(`Successfully invited ${emails.length} people`);
+    } catch (err) {
+      setError(err.message || "Excel import failed");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -126,10 +164,20 @@ export default function InvitePeople() {
     <div className="invite-page-container">
       <div className="header-with-refresh">
         <div>
-           <button className="delete-btn" onClick={() => navigate(-1)} style={{marginBottom: '8px', paddingLeft: 0}}>← Back to Event</button>
-           <h1 className="invite-page-title">Guest List</h1>
+          <button
+            className="delete-btn"
+            onClick={() => navigate(-1)}
+            style={{ marginBottom: "8px", paddingLeft: 0 }}
+          >
+            ← Back to Event
+          </button>
+          <h1 className="invite-page-title">Guest List</h1>
         </div>
-        <button className="refresh-btn" onClick={loadParticipants} disabled={loading}>
+        <button
+          className="refresh-btn"
+          onClick={loadParticipants}
+          disabled={loading}
+        >
           {loading ? "Syncing..." : "Refresh List"}
         </button>
       </div>
@@ -138,16 +186,42 @@ export default function InvitePeople() {
 
       <InviteForm onInvite={handleInvite} loading={loading} />
 
+      <div className="excel-upload">
+        <label className="upload-label">
+          Import from Excel
+          <input
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            onChange={handleExcelUpload}
+            hidden
+          />
+        </label>
+
+        {uploading && <p>Uploading Excel...</p>}
+      </div>
+
       <div className="list-section">
-        <h3 style={{fontSize: '14px', color: 'var(--text-muted)', marginBottom: '1rem'}}>
+        <h3
+          style={{
+            fontSize: "14px",
+            color: "var(--text-muted)",
+            marginBottom: "1rem",
+          }}
+        >
           INVITED PARTICIPANTS ({participants.length})
         </h3>
+
         {loading && participants.length === 0 ? (
           <p className="loading-message">Loading guest list...</p>
         ) : participants.length === 0 ? (
-          <p className="empty-message">Your guest list is currently empty.</p>
+          <p className="empty-message">
+            Your guest list is currently empty.
+          </p>
         ) : (
-          <ParticipantsList participants={participants} onDelete={handleDelete} />
+          <ParticipantsList
+            participants={participants}
+            onDelete={handleDelete}
+          />
         )}
       </div>
     </div>
