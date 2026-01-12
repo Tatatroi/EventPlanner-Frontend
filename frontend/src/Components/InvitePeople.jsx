@@ -7,35 +7,98 @@ import {
   deleteParticipantFromEvent,
 } from "../api/participantsLists";
 
+// function ParticipantsList({ participants, onDelete }) {
+//   const getStatusText = (status) => {
+//     if (status === "accepted") return "Accepted";
+//     if (status === "pending") return "Pending";
+//     if (status === "declined") return "Declined";
+//     return "Unknown";
+//   };
+
+//   const getStatusClass = (status) => {
+//     if (status === "accepted") return "status-confirmed";
+//     if (status === "pending") return "status-pending";
+//     if (status === "declined") return "status-declined";
+//     return "status-unknown";
+//   };
+
+//   return (
+//     <div className="participants-container">
+//       {participants.map((p) => {
+//         const pId = p.id || p.userId;
+//         return (
+//           <div key={pId} className="participant-card">
+//             <div className="participant-info">
+//               <span className="participant-email">{p.email}</span>
+//               <span className="participant-role">{p.role || "attendee"}</span>
+//             </div>
+//             <div className="participant-actions">
+//               <span className={`participant-status ${getStatusClass(p.invitationStatus)}`}>
+//                 {getStatusText(p.invitationStatus)}
+//               </span>
+//               <button className="delete-btn" onClick={() => onDelete(pId)}>
+//                 Remove
+//               </button>
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// }
+
 function ParticipantsList({ participants, onDelete }) {
-  const getStatusText = (status) => {
-    if (status === "accepted") return "Accepted";
-    if (status === "pending") return "Pending";
-    if (status === "declined") return "Declined";
-    return "Unknown";
+  // Funcție ajutătoare pentru a extrage statusul indiferent cum vine de la Backend
+  const getRawStatus = (p) => {
+    // 1. Încercăm toate variantele de nume posibile
+    // 2. Dacă există, îl facem literă mică (accepted, pending) ca să nu conteze majusculele
+    const status = p.invitationStatus || p.invitation_status || p.status || "";
+    return status.toLowerCase();
   };
 
-  const getStatusClass = (status) => {
-    if (status === "accepted") return "status-confirmed";
+  const getStatusText = (p) => {
+    const status = getRawStatus(p);
+    
+    // Verificăm și boolean-ul 'confirmed' ca măsură de siguranță
+    if (p.confirmed === true || status === "accepted") return "Accepted";
+    if (status === "pending") return "Pending";
+    if (status === "declined" || status === "rejected") return "Declined";
+    
+    return status || "Unknown"; // Afișăm ce primim dacă e altceva
+  };
+
+  const getStatusClass = (p) => {
+    const status = getRawStatus(p);
+
+    if (p.confirmed === true || status === "accepted") return "status-confirmed";
     if (status === "pending") return "status-pending";
-    if (status === "declined") return "status-declined";
+    if (status === "declined" || status === "rejected") return "status-declined";
+    
     return "status-unknown";
   };
 
   return (
     <div className="participants-container">
       {participants.map((p) => {
-        const pId = p.id || p.userId;
+        // Asigură-te că ID-ul este unic
+        const pId = p.idUser || p.userId || p.id || Math.random(); 
+        
         return (
           <div key={pId} className="participant-card">
             <div className="participant-info">
-              <span className="participant-email">{p.email}</span>
+              {/* Afișăm și Numele dacă există, nu doar email */}
+              <span className="participant-email">
+                  {p.name ? `${p.name} (${p.email})` : p.email}
+              </span>
               <span className="participant-role">{p.role || "attendee"}</span>
             </div>
+            
             <div className="participant-actions">
-              <span className={`participant-status ${getStatusClass(p.invitationStatus)}`}>
-                {getStatusText(p.invitationStatus)}
+              {/* Pasăm întregul obiect 'p' funcțiilor de status */}
+              <span className={`participant-status ${getStatusClass(p)}`}>
+                {getStatusText(p)}
               </span>
+              
               <button className="delete-btn" onClick={() => onDelete(pId)}>
                 Remove
               </button>
@@ -86,6 +149,8 @@ export default function InvitePeople() {
     setError("");
     try {
       const data = await getParticipantsByEvent(id);
+      console.log("DATE PRIMITE DE LA BACKEND:", data);
+      setParticipants(Array.isArray(data) ? data : []);
       setParticipants(Array.isArray(data) ? data : []);
     } catch (e) {
       setError(e.message || "Failed to load participants");
